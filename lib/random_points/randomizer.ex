@@ -2,7 +2,7 @@ defmodule RandomPoints.Randomizer do
   use GenServer
   alias RandomPoints.Accounts
 
-  @interval 10000
+  @interval 60_000
 
   def start_link(_) do
     state = [{:min_number, Enum.random(1..100)}, {:timestamp, nil}]
