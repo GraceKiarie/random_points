@@ -28,12 +28,13 @@ defmodule RandomPoints.Randomizer do
 
   @impl true
   def handle_call(:users, _from, state) do
-    users = Accounts.list_users(Keyword.get(state, :min_number))
+    min_number = Keyword.get(state, :min_number)
+    users = Accounts.list_users(min_number)
 
     data = %{
       users: users,
       timestamp: Keyword.get(state, :timestamp),
-      min_number: Keyword.get(state, :min_number)
+      min_number: min_number
     }
 
     new_state = Keyword.put(state, :timestamp, DateTime.utc_now())
@@ -44,7 +45,7 @@ defmodule RandomPoints.Randomizer do
   @impl true
   def handle_info(:update, state) do
     Accounts.update_all_users()
-    new_state= Keyword.put(state, :min_number, Enum.random(1..100))
+    new_state = Keyword.put(state, :min_number, Enum.random(1..100))
 
     schedule_work()
     {:noreply, new_state}

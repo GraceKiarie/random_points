@@ -9,17 +9,8 @@ defmodule RandomPoints.Accounts do
   alias RandomPoints.Repo
 
   @spec list_users(any) :: any
-  @doc """
-  Returns the list of users.
-
-  ## Examples
-
-      iex> list_users()
-      [%User{}, ...]
-
-  """
   def list_users(min_number) do
-    User |> where([u], u.points > ^min_number) |> limit(2) |> Repo.all() |> IO.inspect()
+    User |> where([u], u.points > ^min_number) |> limit(2) |> Repo.all()
   end
 
   @spec update_all_users :: :ok
