@@ -9,8 +9,8 @@ defmodule RandomPoints.Randomizer do
     GenServer.start_link(__MODULE__, state, name: __MODULE__)
   end
 
-  def get_info(server_name, type) do
-    GenServer.call(server_name, type)
+  def get_users(server_name) do
+    GenServer.call(server_name, :users)
   end
 
   @impl true
@@ -18,12 +18,6 @@ defmodule RandomPoints.Randomizer do
     schedule_work()
 
     {:ok, state}
-  end
-
-  @impl true
-  def handle_call(:min_number, _from, state) do
-    min_number = Keyword.get(state, :min_number)
-    {:reply, min_number, state}
   end
 
   @impl true

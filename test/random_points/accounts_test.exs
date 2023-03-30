@@ -1,59 +1,33 @@
 defmodule RandomPoints.AccountsTest do
   use RandomPoints.DataCase
 
-  alias RandomPoints.Accounts
+  alias RandomPoints.{Accounts, Accounts.User}
 
   describe "users" do
-    alias RandomPoints.Accounts.User
+    test "list_users/0 returns at max 2 users with points > min_number" do
+      min_number = 57
+      [12, 89, 70, 16, 99] |> Enum.each(fn points -> create_user(points) end)
 
-    import RandomPoints.AccountsFixtures
+      users = Accounts.list_users(min_number)
 
-    @invalid_attrs %{points: nil}
+      user_points = Enum.map(users, fn user -> user.points end)
 
-    test "list_users/0 returns all users" do
-      user = user_fixture()
-      assert Accounts.list_users() == [user]
+      assert users |> length == 2
+      assert 89 in user_points
+      assert 70 in user_points
+      assert 99 not in user_points
+      assert 12 not in user_points
     end
 
-    test "get_user!/1 returns the user with given id" do
-      user = user_fixture()
-      assert Accounts.get_user!(user.id) == user
+    test "update_all_users/2 updates all users with random points" do
+      user1 = create_user(5)
+      user2 = create_user(17)
+
+      assert :ok = Accounts.update_all_users()
     end
+  end
 
-    test "create_user/1 with valid data creates a user" do
-      valid_attrs = %{points: 42}
-
-      assert {:ok, %User{} = user} = Accounts.create_user(valid_attrs)
-      assert user.points == 42
-    end
-
-    test "create_user/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Accounts.create_user(@invalid_attrs)
-    end
-
-    test "update_user/2 with valid data updates the user" do
-      user = user_fixture()
-      update_attrs = %{points: 43}
-
-      assert {:ok, %User{} = user} = Accounts.update_user(user, update_attrs)
-      assert user.points == 43
-    end
-
-    test "update_user/2 with invalid data returns error changeset" do
-      user = user_fixture()
-      assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user, @invalid_attrs)
-      assert user == Accounts.get_user!(user.id)
-    end
-
-    test "delete_user/1 deletes the user" do
-      user = user_fixture()
-      assert {:ok, %User{}} = Accounts.delete_user(user)
-      assert_raise Ecto.NoResultsError, fn -> Accounts.get_user!(user.id) end
-    end
-
-    test "change_user/1 returns a user changeset" do
-      user = user_fixture()
-      assert %Ecto.Changeset{} = Accounts.change_user(user)
-    end
+  defp create_user(points) do
+    RandomPoints.Repo.insert!(%User{points: points})
   end
 end

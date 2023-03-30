@@ -7,7 +7,7 @@ defmodule RandomPointsWeb.UserController do
 
   @spec index(Plug.Conn.t(), any) :: Plug.Conn.t()
   def index(conn, _params) do
-    data = Randomizer.get_info(Randomizer, :users)
+    data = Randomizer.get_users(Randomizer)
     render(conn, "index.json", %{data: data})
   end
 end
